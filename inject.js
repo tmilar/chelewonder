@@ -48,6 +48,9 @@ function inject () {
 
   // Hide ugly form.
   document.querySelector('form').style.display = 'none'
+
+  // Update body background.
+  document.querySelector('body').style.background = 'black'
 }
 
 module.exports = inject
