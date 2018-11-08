@@ -1,6 +1,5 @@
-const requestLib = require('request')
 const cheerio = require('cheerio')
-const request = requestLib.defaults({ jar: true })
+const request = require('request')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
@@ -12,6 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.get('/', (req, res) => {
+  request.jar()
   request('http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx', (err, response, body) => {
     const $ = cheerio.load(body)
     $('body').append(`<script>(${inject.toString()})()</script>`)
@@ -36,11 +36,24 @@ app.get('/Styles/:file', (req, res) => {
 // })
 
 app.post('/Login.aspx', (req, res) => {
-  // console.log('FORM', req.body)
-  request.post('http://w1131323.ferozo.com/wonderfood/Login.aspx', { form: req.body }, (err, response, body) => {
-    // console.log(response)
-    res.redirect('/')
-  })
+  const jar = request.jar()
+
+  request.post(
+    { url: 'http://w1131323.ferozo.com/wonderfood/Login.aspx', form: req.body, jar },
+    (err, response, body) => {
+      request(
+        {
+          url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
+          jar
+        },
+        (err, response, body) => {
+          const $ = cheerio.load(body)
+          $('body').append(`<script>(${inject.toString()})()</script>`)
+          res.send($.html())
+        }
+      )
+    }
+  )
 })
 
 app.listen(port)
