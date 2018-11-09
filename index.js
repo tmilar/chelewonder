@@ -14,6 +14,13 @@ app.get('/', (req, res) => {
   request.jar()
   request('http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx', (err, response, body) => {
     const $ = cheerio.load(body)
+    $('head').append(`
+      <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
+      <style>
+        @import url('https://fonts.googleapis.com/css?family=Slabo+27px');
+      </style>
+    `)
+    $('title').text('CheleWonder ;)')
     $('body').append(`<script>(${inject.toString()})()</script>`)
     res.send($.html())
   })
@@ -48,6 +55,13 @@ app.post('/Login.aspx', (req, res) => {
         },
         (err, response, body) => {
           const $ = cheerio.load(body)
+          $('head').append(`
+          <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
+            <style>
+              @import url('https://fonts.googleapis.com/css?family=Roboto+Slab');
+            </style>
+          `)
+          $('title').text('CheleWonder ;)')
           $('body').append(`<script>(${inject.toString()})()</script>`)
           res.send($.html())
         }

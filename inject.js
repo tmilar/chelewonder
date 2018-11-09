@@ -7,14 +7,17 @@ function inject () {
     left: 0;
     right: 0;
     bottom: 0;
-    margin: auto;
-    width: 800px;
-    height: 300px;
     background: #333;
     color: white;
     padding: 10px;
     display: flex;
-    font: 20px arial;
+    align-items: center;
+    flex-flow: row wrap;
+    justify-content: center;
+    height: 100%;
+    overflow: scroll;
+    font-size: 18px;
+    font-family: 'Roboto Slab', serif;
   `
   const currentDayIndex = new Date().getDay() - 1
   const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
@@ -33,10 +36,12 @@ function inject () {
   const modalContent = weekDays
     .map(
       (day, i) => `
-        <div style="flex: 1; margin: 2px; display: flex; flex-direction: column; cursor: default; ${getDayStyle(i)}">
-          <div style="font-weight: bold; padding: 10px 5px;">${day}</div>
-          <div style="padding: 10px 5px; min-height: 100px; flex: 1">${getLabel(i)}</div>
-          <div style="padding: 10px 5px; flex: 1; ${getDayStyle(i, true)}">${getLabel(i + 5)}</div>
+        <div style="display: flex; flex-direction: column; width: 300px; min-height: 300px; margin: 2px; cursor: default; ${getDayStyle(
+          i
+        )}">
+          <div style="font-weight: bold; padding: 10px; font-size: 20px;">${day}</div>
+          <div style="flex: 1; min-height: 200px; padding: 10px;">${getLabel(i)}</div>
+          <div style="flex: 1; min-height: 200px; padding: 10px; ${getDayStyle(i, true)}">${getLabel(i + 5)}</div>
         </div>
           `
     )
