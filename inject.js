@@ -1,5 +1,6 @@
 function inject () {
   const modal = document.createElement('div')
+  const backdrop = document.createElement('div')
   modal.id = 'weekly-food-modal'
   modal.style.cssText = `
     position: absolute;
@@ -7,7 +8,6 @@ function inject () {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #333;
     color: white;
     padding: 10px;
     display: flex;
@@ -19,6 +19,20 @@ function inject () {
     font-size: 18px;
     font-family: 'Roboto Slab', serif;
   `
+  backdrop.id = 'weekly-food-backdrop'
+  backdrop.style.cssText = `
+    position: absolute;
+    background: url('./background.jpg') no-repeat;
+    background-size: cover;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    filter: blur(4px);
+  `
+
   const currentDayIndex = new Date().getDay() - 1
   const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
   const dropdowns = document.querySelectorAll('table select')
@@ -36,7 +50,7 @@ function inject () {
   const modalContent = weekDays
     .map(
       (day, i) => `
-        <div style="display: flex; flex-direction: column; width: 300px; min-height: 300px; margin: 2px; cursor: default; ${getDayStyle(
+        <div style="display: flex; flex-direction: column; width: 260px; min-height: 300px; margin: 2px; cursor: default; ${getDayStyle(
           i
         )}">
           <div style="font-weight: bold; padding: 10px; font-size: 20px;">${day}</div>
@@ -48,16 +62,26 @@ function inject () {
     .join('')
 
   modal.innerHTML = modalContent
+  document.body.appendChild(backdrop)
   document.body.appendChild(modal)
   const $modal = document.querySelector('#weekly-food-modal')
+  const $backdrop = document.querySelector('#weekly-food-backdrop')
+  const $body = document.querySelector('body')
+  const $form = document.querySelector('form')
 
   // Add key binding.
   document.body.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return
     if ($modal.style.display === 'none') {
       $modal.style.display = 'flex'
+      $backdrop.style.display = 'block'
+      $body.style.background = 'black'
+      $form.style.display = 'none'
     } else {
       $modal.style.display = 'none'
+      $backdrop.style.display = 'none'
+      $body.style.background = 'white'
+      $form.style.display = 'block'
     }
   })
 

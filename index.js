@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(express.static('static'))
 
 app.get('/', (req, res) => {
   request.jar()
@@ -33,14 +34,6 @@ app.get('/Styles/:file', (req, res) => {
     res.send(body)
   })
 })
-
-// app.get('*', (req, res) => {
-//   const path = req.originalUrl
-//   console.log('PATH', path)
-//   request(`http://w1131323.ferozo.com/wonderfood/${path}`, (err, response, body) => {
-//     res.send(body)
-//   })
-// })
 
 app.post('/Login.aspx', (req, res) => {
   const jar = request.jar()
