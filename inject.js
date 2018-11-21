@@ -9,13 +9,13 @@ function inject () {
     right: 0;
     bottom: 0;
     color: white;
-    padding: 10px;
+    padding: 0px;
     display: flex;
     align-items: center;
     flex-flow: row wrap;
     justify-content: center;
     height: 100%;
-    overflow: scroll;
+    overflow: auto;
     font-size: 18px;
     font-family: 'Roboto Slab', serif;
   `
@@ -33,10 +33,28 @@ function inject () {
     filter: blur(4px);
   `
 
+  const $descriptionsTable = document.querySelector('table#grdProductos')
   const currentDayIndex = new Date().getDay() - 1
   const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
   const dropdowns = document.querySelectorAll('table select')
   const getLabel = index => dropdowns[index].selectedOptions[0].label
+  const getDescription = index => {
+    const food = getLabel(index)
+    const foodMatcher = food.match(/-\s(.+)/)
+    const foodName = foodMatcher && foodMatcher.length && foodMatcher[1]
+    const LABEL_COL = 1
+    const DESCRIPTION_COL = 5
+    const descriptionRows = [...$descriptionsTable.getElementsByClassName('tr')].filter(($tableRow, i) => {
+      const foodRowText = $tableRow.getElementsByTagName('td')[LABEL_COL].innerText
+      return foodRowText === foodName
+    })
+    let descriptionText = 'Descripción no disponible'
+    if (descriptionRows && descriptionRows.length) {
+      descriptionText = descriptionRows[0].getElementsByTagName('td')[DESCRIPTION_COL].innerText
+    }
+    return descriptionText
+  }
+
   const getDayStyle = (index, isDessert) => {
     if (isDessert) {
       return index === currentDayIndex
@@ -54,7 +72,10 @@ function inject () {
           i
         )}">
           <div style="font-weight: bold; padding: 10px; font-size: 20px;">${day}</div>
-          <div style="flex: 1; min-height: 200px; padding: 10px;">${getLabel(i)}</div>
+          <div style="flex: 1; min-height: 100px; padding: 10px;">${getLabel(i)}</div>
+          <div style="flex: 1; min-height: 80px; max-height: 80px; padding: 10px; color: lightgray; font-style: italic; font-size: 16px;">
+            ${getDescription(i)}
+          </div>
           <div style="flex: 1; min-height: 200px; padding: 10px; ${getDayStyle(i, true)}">${getLabel(i + 5)}</div>
         </div>
           `
@@ -77,16 +98,19 @@ function inject () {
       $backdrop.style.display = 'block'
       $body.style.background = 'black'
       $form.style.display = 'none'
+      $descriptionsTable.style.display = 'none'
     } else {
       $modal.style.display = 'none'
       $backdrop.style.display = 'none'
       $body.style.background = 'white'
       $form.style.display = 'block'
+      $descriptionsTable.style.display = 'block'
     }
   })
 
   // Hide ugly form.
-  document.querySelector('form').style.display = 'none'
+  $form.style.display = 'none'
+  $descriptionsTable.style.display = 'none'
 
   // Update body background.
   document.querySelector('body').style.background = 'black'
