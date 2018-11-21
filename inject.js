@@ -77,16 +77,19 @@ function inject () {
       $backdrop.style.display = 'block'
       $body.style.background = 'black'
       $form.style.display = 'none'
+      $descriptionsTable.style.display = 'none'
     } else {
       $modal.style.display = 'none'
       $backdrop.style.display = 'none'
       $body.style.background = 'white'
       $form.style.display = 'block'
+      $descriptionsTable.style.display = 'block'
     }
   })
 
   // Hide ugly form.
-  document.querySelector('form').style.display = 'none'
+  $form.style.display = 'none'
+  $descriptionsTable.style.display = 'none'
 
   // Update body background.
   document.querySelector('body').style.background = 'black'
