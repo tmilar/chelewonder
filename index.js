@@ -37,19 +37,28 @@ app.post('/Login.aspx', (req, res) => {
   },
     (err, response, body) => {
       request({
-        url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
+        url: 'http://w1131323.ferozo.com/wonderfood/frmAltaProductos.aspx',
         jar
-      },
-        (err, response, body) => {
-          const htmlString = render(body)
-          res.send(htmlString)
-        }
-      )
+      }, (err, response, body) => {
+        // this is the product descriptions body
+        const $ = cheerio.load(body)
+        const $descriptionsTable = $('table')
+        request({
+          url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
+          jar
+        },
+          (err, response, body) => {
+            // this is the selected food list
+            const htmlString = render(body, $descriptionsTable)
+            res.send(htmlString)
+          }
+        )
+      })
     }
   )
 })
 
-function render (body) {
+function render (body, $descriptionsTable) {
   const $ = cheerio.load(body)
   $('head').append(`
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
@@ -58,6 +67,9 @@ function render (body) {
             </style>
           `)
   $('title').text('CheleWonder ;)')
+  if ($descriptionsTable) {
+    $('body').append($descriptionsTable)
+  }
   $('body').append(`<script>(${inject.toString()})()</script>`)
   return $.html()
 }
