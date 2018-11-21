@@ -9,13 +9,13 @@ function inject () {
     right: 0;
     bottom: 0;
     color: white;
-    padding: 10px;
+    padding: 0px;
     display: flex;
     align-items: center;
     flex-flow: row wrap;
     justify-content: center;
     height: 100%;
-    overflow: scroll;
+    overflow: auto;
     font-size: 18px;
     font-family: 'Roboto Slab', serif;
   `
