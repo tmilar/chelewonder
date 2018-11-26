@@ -62,6 +62,17 @@ app.get('/Styles/:file', (req, res) => {
   })
 })
 
+app.get('/login', (req, res) => {
+  request.get({
+    url: 'http://w1131323.ferozo.com/wonderfood/Login.aspx'
+  },
+    (err, response, body) => {
+      const htmlString = render(body)
+      res.send(htmlString)
+    }
+  )
+})
+
 app.post('/Login.aspx', (req, res) => {
   const jar = request.jar()
 
