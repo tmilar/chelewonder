@@ -21,9 +21,13 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 * 7 // 7 days
 }))
 
+function isLoggedIn (req) {
+  return !!req.session.wonderfoodSessionId
+}
+
 function buildCookieJar (req) {
   const jar = request.jar()
-  if (req.session.wonderfoodSessionId) {
+  if (isLoggedIn(req)) {
     const cookieValue = req.session.wonderfoodSessionId
     const url = 'http://w1131323.ferozo.com/'
     jar.setCookie(request.cookie(cookieValue), url)
@@ -32,6 +36,11 @@ function buildCookieJar (req) {
 }
 
 app.get('/', (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.redirect('/login')
+    return
+  }
+
   const jar = buildCookieJar(req)
 
   request({
@@ -63,6 +72,11 @@ app.get('/Styles/:file', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
+  if (isLoggedIn(req)) {
+    res.redirect('/')
+    return
+  }
+
   request.get({
     url: 'http://w1131323.ferozo.com/wonderfood/Login.aspx'
   },
@@ -74,7 +88,7 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/Login.aspx', (req, res) => {
-  const jar = request.jar()
+  const jar = buildCookieJar(req)
 
   request.post({
     url: 'http://w1131323.ferozo.com/wonderfood/Login.aspx',
