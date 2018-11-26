@@ -22,7 +22,7 @@ app.use(cookieSession({
 }))
 
 function isLoggedIn (req) {
-  return !!req.session.wonderfoodSessionId
+  return req.session && req.session.wonderfoodSessionId
 }
 
 function buildCookieJar (req) {
