@@ -35,11 +35,22 @@ app.get('/', (req, res) => {
   const jar = buildCookieJar(req)
 
   request({
-    url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
+    url: 'http://w1131323.ferozo.com/wonderfood/frmAltaProductos.aspx',
     jar
   }, (err, response, body) => {
-    const htmlString = render(body)
-    res.send(htmlString)
+    // this is the product descriptions body
+    const $ = cheerio.load(body)
+    const $descriptionsTable = $('table')
+    request({
+      url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
+      jar
+    },
+      (err, response, body) => {
+        // this is the selected food list
+        const htmlString = render(body, $descriptionsTable)
+        res.send(htmlString)
+      }
+    )
   })
 })
 
@@ -62,24 +73,7 @@ app.post('/Login.aspx', (req, res) => {
     (err, response, body) => {
       req.session.wonderfoodSessionId = jar.getCookieString('http://w1131323.ferozo.com/')
 
-      request({
-        url: 'http://w1131323.ferozo.com/wonderfood/frmAltaProductos.aspx',
-        jar
-      }, (err, response, body) => {
-        // this is the product descriptions body
-        const $ = cheerio.load(body)
-        const $descriptionsTable = $('table')
-        request({
-          url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
-          jar
-        },
-          (err, response, body) => {
-            // this is the selected food list
-            const htmlString = render(body, $descriptionsTable)
-            res.send(htmlString)
-          }
-        )
-      })
+      res.redirect('/')
     }
   )
 })
