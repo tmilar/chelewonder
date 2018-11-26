@@ -87,6 +87,17 @@ app.get('/login', (req, res) => {
   )
 })
 
+app.get('/logout', (req, res) => {
+  req.session = null
+  res.send('<div>Gracias, vuelva prontos! 👋</div>' +
+    '<script>' +
+    ' setTimeout(() => {' +
+    '   document.location.href = \'/\'' +
+    ' }, 1000)' +
+    '</script>'
+  )
+})
+
 app.post('/Login.aspx', (req, res) => {
   const jar = buildCookieJar(req)
 
