@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node $NODE_DEBUG_OPTION index.js"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,9 @@
     "body-parser": "^1.18.3",
     "cheerio": "^1.0.0-rc.2",
     "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
     "http-proxy": "^1.17.0",
     "request": "^2.88.0",
     "standard-focus": "^1.1.2"

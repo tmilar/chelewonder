@@ -4,6 +4,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const inject = require('./inject')
+const cookieSession = require('cookie-session')
+
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -11,9 +13,31 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(express.static('static'))
 
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secret1', 'secret2'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 * 7 // 7 days
+}))
+
+function buildCookieJar (req) {
+  const jar = request.jar()
+  if (req.session.wonderfoodSessionId) {
+    const cookieValue = req.session.wonderfoodSessionId
+    const url = 'http://w1131323.ferozo.com/'
+    jar.setCookie(request.cookie(cookieValue), url)
+  }
+  return jar
+}
+
 app.get('/', (req, res) => {
-  request.jar()
-  request('http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx', (err, response, body) => {
+  const jar = buildCookieJar(req)
+
+  request({
+    url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
+    jar
+  }, (err, response, body) => {
     const htmlString = render(body)
     res.send(htmlString)
   })
@@ -36,6 +60,8 @@ app.post('/Login.aspx', (req, res) => {
     jar
   },
     (err, response, body) => {
+      req.session.wonderfoodSessionId = jar.getCookieString('http://w1131323.ferozo.com/')
+
       request({
         url: 'http://w1131323.ferozo.com/wonderfood/frmAltaProductos.aspx',
         jar
