@@ -87,35 +87,50 @@ function inject () {
   document.body.appendChild(modal)
   const $modal = document.querySelector('#weekly-food-modal')
   const $backdrop = document.querySelector('#weekly-food-backdrop')
-  const $nextWeek = document.querySelector('#form1_nextWeek')
+  const $nextWeekForm = document.querySelector('#form1_nextWeek')
 
   const $body = document.querySelector('body')
   const $form = document.querySelector('form')
 
+  let isNextWeek = false
+
   // Add key binding.
   document.body.addEventListener('keydown', e => {
-    if (e.key !== 'Escape') return
-    if ($modal.style.display === 'none') {
-      $modal.style.display = 'flex'
-      $backdrop.style.display = 'block'
-      $body.style.background = 'black'
-      $form.style.display = 'none'
-      $descriptionsTable.style.display = 'none'
-      $nextWeek.style.display = 'none'
-    } else {
+    if (e.key === 'Escape') {
+      if ($modal.style.display === 'none') {
+        $modal.style.display = 'flex'
+        $backdrop.style.display = 'block'
+        $body.style.background = 'black'
+        $form.style.display = 'none'
+        $descriptionsTable.style.display = 'none'
+        $nextWeekForm.style.display = 'none'
+      } else {
+        $modal.style.display = 'none'
+        $backdrop.style.display = 'none'
+        $body.style.background = 'white'
+        $form.style.display = 'block'
+        $descriptionsTable.style.display = 'block'
+        $nextWeekForm.style.display = 'block'
+      }
+    }
+
+    if (!isNextWeek && (e.key === 'ArrowRight' || e.key === 'Right')) {
+      // show next week grid, hide current week.
+      isNextWeek = true
       $modal.style.display = 'none'
-      $backdrop.style.display = 'none'
-      $body.style.background = 'white'
-      $form.style.display = 'block'
-      $descriptionsTable.style.display = 'block'
-      $nextWeek.style.display = 'block'
+    }
+
+    if (isNextWeek && (e.key === 'ArrowLeft' || e.key === 'Left')) {
+      // show current week, hide next week.
+      isNextWeek = false
+      $modal.style.display = 'flex'
     }
   })
 
   // Hide ugly form.
   $form.style.display = 'none'
   $descriptionsTable.style.display = 'none'
-  $nextWeek.style.display = 'none'
+  $nextWeekForm.style.display = 'none'
 
   // Update body background.
   document.querySelector('body').style.background = 'black'
