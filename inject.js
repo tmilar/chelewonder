@@ -37,9 +37,15 @@ function inject () {
   const currentDayIndex = new Date().getDay() - 1
   const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
   const dropdowns = document.querySelectorAll('table select')
-  const getLabel = index => dropdowns[index].selectedOptions[0].label
-  const getDescription = index => {
-    const food = getLabel(index)
+  const getLabel = (dayIndex, menuStyleIndex) => {
+    if (menuStyleIndex === undefined) {
+      return dropdowns[dayIndex].selectedOptions[0].label
+    }
+    return dropdowns[dayIndex].options[menuStyleIndex].label
+  }
+
+  const getDescription = (dayIndex, menuStyleIndex) => {
+    const food = getLabel(dayIndex, menuStyleIndex)
     const foodMatcher = food.match(/-\s(.+)/)
     const foodName = foodMatcher && foodMatcher.length && foodMatcher[1]
     const LABEL_COL = 1
@@ -65,12 +71,12 @@ function inject () {
     return index === currentDayIndex ? 'background: #5976c6' : 'background: #444'
   }
 
-  const modalContent = weekDays
+  const modalContentDays = weekDays
     .map(
       (day, i) => `
         <div style="display: flex; flex-direction: column; width: 260px; min-height: 300px; margin: 2px; cursor: default; ${getDayStyle(
-          i
-        )}">
+        i
+      )}">
           <div style="font-weight: bold; padding: 10px; font-size: 20px;">${day}</div>
           <div style="flex: 1; min-height: 100px; padding: 10px;">${getLabel(i)}</div>
           <div style="flex: 1; min-height: 80px; max-height: 80px; padding: 10px; color: lightgray; font-style: italic; font-size: 16px;">
@@ -80,15 +86,71 @@ function inject () {
         </div>
           `
     )
-    .join('')
 
+  const modalContent = modalContentDays.join('')
   modal.innerHTML = modalContent
+
+  const menuStyles = [...document.getElementById('cmbSubGrp').options].map(option => option.value)
+
+  // rows
+  const nextWeekRows = [...menuStyles]
+  // cols
+  const nextWeekCols = [null, ...weekDays]
+
+  const emptyCell = `<div style="flex: 1; padding: 10px; font-size: 20px;"></div>`
+
+  const nextWeekColsContent = nextWeekCols.map((day, i) => {
+    const dayIndex = i - 1
+    const headerCell = day ? `<div style="flex: 1; font-weight: bold; padding: 10px; font-size: 20px;">${day}</div>` : emptyCell
+
+    const rows = nextWeekRows.map((menuStyle, j) => {
+      if (!day) {
+        // menuStyle cell
+        return `<div style="flex: 2; font-weight: bold; padding: 10px; font-size: 20px;">${menuStyle}</div>`
+      }
+
+      const nextWeekDropdowns = [...dropdowns]
+        .map((dropdown, i) => ({dropdown, i}))
+        .filter(({dropdown: {id}}) => /_nextWeek/.test(id))
+
+      const dropdownDayIndex = nextWeekDropdowns[dayIndex].i
+
+      // foodOption cell
+      return `<div style="flex: 2; padding: 10px; max-height:100% ; ">
+         <div style="flex: 1; max-height:50%; padding: 10px;">${getLabel(dropdownDayIndex, j)}</div>
+         <div style="flex: 1; max-height:50%; padding: 10px; color: lightgray; font-style: italic; font-size: 16px;">
+            ${getDescription(dropdownDayIndex, j)}
+         </div>
+      </div>`
+    })
+
+    const colContainer =
+      `<div style="display: flex; flex-direction: column; width: 260px; min-height: 300px; margin: 2px; cursor: default; ${getDayStyle(i)}">
+        ${headerCell}
+        ${rows.join('\n')}
+       </div>`
+
+    return colContainer
+  })
+
+  const nextWeekGrid = document.createElement('div')
+  nextWeekGrid.id = 'next-week-grid'
+  nextWeekGrid.style.cssText =
+    'display: none; ' + // intially hide it
+    'flex-direction: row; ' +
+    'position: absolute; ' +
+    'top: 0px; ' +
+    'right: 0px;'
+
+  nextWeekGrid.innerHTML = nextWeekColsContent.join('\n')
+
   document.body.appendChild(backdrop)
   document.body.appendChild(modal)
+  document.body.appendChild(nextWeekGrid)
   const $modal = document.querySelector('#weekly-food-modal')
   const $backdrop = document.querySelector('#weekly-food-backdrop')
   const $nextWeekForm = document.querySelector('#form1_nextWeek')
-
+  const $nextWeekGrid = document.querySelector('#next-week-grid')
   const $body = document.querySelector('body')
   const $form = document.querySelector('form')
 
