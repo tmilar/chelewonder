@@ -48,7 +48,7 @@ app.get('/', (req, res) => {
     jar
   }, (err, response, body) => {
     // this is the product descriptions body
-    const $ = cheerio.load(body)
+    let $ = cheerio.load(body)
     const $descriptionsTable = $('table')
 
     request({
@@ -73,7 +73,15 @@ app.get('/', (req, res) => {
         }, (err, response, body) => {
           // this is the next week food list
 
-          const htmlString = render({$: $currentWeek, $descriptionsTable})
+          // add a suffix to the next week DOM ids so they don't get repeated with current DOM id's.
+          const SUFFIX = '_nextWeek'
+          const fixedBody = body.replace(/(id=")(.+?)(")/g, `$1$2${SUFFIX}$3`)
+
+          let $ = cheerio.load(fixedBody)
+          const $nextWeek = $(`#form1${SUFFIX}`)
+
+          // render altogether
+          const htmlString = render({$: $currentWeek, $nextWeek, $descriptionsTable})
           res.send(htmlString)
         })
       }
@@ -133,7 +141,7 @@ app.post('/Login.aspx', (req, res) => {
   )
 })
 
-function render ({$, $descriptionsTable}) {
+function render ({$, $nextWeek, $descriptionsTable}) {
   $('head').append(`
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
             <style>
@@ -141,6 +149,9 @@ function render ({$, $descriptionsTable}) {
             </style>
           `)
   $('title').text('CheleWonder ;)')
+  if ($nextWeek) {
+    $('body').append($nextWeek)
+  }
   if ($descriptionsTable) {
     $('body').append($descriptionsTable)
   }
