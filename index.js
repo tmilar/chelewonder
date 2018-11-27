@@ -50,14 +50,32 @@ app.get('/', (req, res) => {
     // this is the product descriptions body
     const $ = cheerio.load(body)
     const $descriptionsTable = $('table')
+
     request({
       url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
       jar
     },
       (err, response, body) => {
         // this is the selected food list
-        const htmlString = render(body, $descriptionsTable)
-        res.send(htmlString)
+        const $currentWeek = cheerio.load(body)
+
+        request.post({
+          url: 'http://w1131323.ferozo.com/wonderfood/frmAltaPedidos.aspx',
+          jar,
+          form: {
+            __VIEWSTATE: $currentWeek('#__VIEWSTATE').val(),
+            __VIEWSTATEGENERATOR: $currentWeek('#__VIEWSTATEGENERATOR').val(),
+            __EVENTVALIDATION: $currentWeek('#__EVENTVALIDATION').val(),
+            txtFechaSem: $currentWeek('#txtFechaSem').val(),
+            btnGuardar0: $currentWeek('#btnGuardar0').val(),
+            cmbSubGrp: $currentWeek('#cmbSubGrp').val()
+          }
+        }, (err, response, body) => {
+          // this is the next week food list
+
+          const htmlString = render({$: $currentWeek, $descriptionsTable})
+          res.send(htmlString)
+        })
       }
     )
   })
@@ -81,7 +99,8 @@ app.get('/login', (req, res) => {
     url: 'http://w1131323.ferozo.com/wonderfood/Login.aspx'
   },
     (err, response, body) => {
-      const htmlString = render(body)
+      const $login = cheerio.load(body)
+      const htmlString = render({$: $login})
       res.send(htmlString)
     }
   )
@@ -114,8 +133,7 @@ app.post('/Login.aspx', (req, res) => {
   )
 })
 
-function render (body, $descriptionsTable) {
-  const $ = cheerio.load(body)
+function render ({$, $descriptionsTable}) {
   $('head').append(`
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
             <style>
