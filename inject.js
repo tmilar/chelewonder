@@ -180,12 +180,14 @@ function inject () {
       // show next week grid, hide current week.
       isNextWeek = true
       $modal.style.display = 'none'
+      $nextWeekGrid.style.display = 'flex'
     }
 
     if (isNextWeek && (e.key === 'ArrowLeft' || e.key === 'Left')) {
       // show current week, hide next week.
       isNextWeek = false
       $modal.style.display = 'flex'
+      $nextWeekGrid.style.display = 'none'
     }
   })
 
