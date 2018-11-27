@@ -87,6 +87,8 @@ function inject () {
   document.body.appendChild(modal)
   const $modal = document.querySelector('#weekly-food-modal')
   const $backdrop = document.querySelector('#weekly-food-backdrop')
+  const $nextWeek = document.querySelector('#form1_nextWeek')
+
   const $body = document.querySelector('body')
   const $form = document.querySelector('form')
 
@@ -99,18 +101,21 @@ function inject () {
       $body.style.background = 'black'
       $form.style.display = 'none'
       $descriptionsTable.style.display = 'none'
+      $nextWeek.style.display = 'none'
     } else {
       $modal.style.display = 'none'
       $backdrop.style.display = 'none'
       $body.style.background = 'white'
       $form.style.display = 'block'
       $descriptionsTable.style.display = 'block'
+      $nextWeek.style.display = 'block'
     }
   })
 
   // Hide ugly form.
   $form.style.display = 'none'
   $descriptionsTable.style.display = 'none'
+  $nextWeek.style.display = 'none'
 
   // Update body background.
   document.querySelector('body').style.background = 'black'
