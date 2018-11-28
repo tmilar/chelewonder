@@ -95,11 +95,11 @@ function inject () {
   // rows
   const nextWeekRows = [...menuStyles]
   // cols
-  const nextWeekCols = [null, ...weekDays]
+  const nextWeekColsHeader = [null, ...weekDays]
 
   const emptyCell = `<div style="flex: 1; padding: 10px; font-size: 20px;"></div>`
 
-  const nextWeekColsContent = nextWeekCols.map((day, i) => {
+  const nextWeekColsContent = nextWeekColsHeader.map((day, i) => {
     const dayIndex = i - 1
     const headerCell = day ? `<div style="flex: 1; font-weight: bold; padding: 10px; font-size: 20px;">${day}</div>` : emptyCell
 
@@ -125,13 +125,14 @@ function inject () {
     })
 
     const colContainer =
-      `<div style="display: flex; flex-direction: column; width: 260px; min-height: 300px; margin: 2px; cursor: default; ${getDayStyle(i)}">
+      `<div style="display: flex; flex-direction: column; width: 260px; height: 80vh; margin: 2px; cursor: default; ${getDayStyle(i)}">
         ${headerCell}
         ${rows.join('\n')}
        </div>`
 
     return colContainer
   })
+  const nextWeekColsContainer = nextWeekColsContent.join('\n')
 
   const nextWeekGrid = document.createElement('div')
   nextWeekGrid.id = 'next-week-grid'
@@ -139,13 +140,15 @@ function inject () {
     'display: none; ' + // intially hide it
     'flex-direction: row; ' +
     'justify-content: center; ' +
-    'position: fixed; ' +
+    'align-items: center; ' +
+    'position: relative; ' +
+    'height: 100vh; ' +
     'top: 0px; ' +
     'left: 0px; ' +
     'right: 0px; ' +
     'bottom: 0px; '
 
-  nextWeekGrid.innerHTML = nextWeekColsContent.join('\n')
+  nextWeekGrid.innerHTML = nextWeekColsContainer
 
   document.body.appendChild(backdrop)
   document.body.appendChild(modal)
