@@ -116,16 +116,16 @@ function inject () {
       const dropdownDayIndex = nextWeekDropdowns[dayIndex].i
 
       // foodOption cell
-      return `<div style="flex: 2; padding: 10px; max-height:100% ; ">
-         <div style="flex: 1; max-height:50%; padding: 10px;">${getLabel(dropdownDayIndex, j)}</div>
-         <div style="flex: 1; max-height:50%; padding: 10px; color: lightgray; font-style: italic; font-size: 16px;">
+      return `<div style="flex: 2; padding: 10px; ">
+         <div style="flex: 1; padding: 5px; font-size: 1vh;">${getLabel(dropdownDayIndex, j)}</div>
+         <div style="flex: 1; padding: 5px;  font-size: 1vh; color: lightgray; font-style: italic;">
             ${getDescription(dropdownDayIndex, j)}
          </div>
       </div>`
     })
 
     const colContainer =
-      `<div style="display: flex; flex-direction: column; width: 260px; height: 80vh; margin: 2px; cursor: default; ${getDayStyle(i)}">
+      `<div style="display: flex; flex-direction: column;  width: 15vw; height: 80vh; margin: 2px; cursor: default; ${getDayStyle(i)}">
         ${headerCell}
         ${rows.join('\n')}
        </div>`
