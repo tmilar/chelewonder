@@ -138,9 +138,12 @@ function inject () {
   nextWeekGrid.style.cssText =
     'display: none; ' + // intially hide it
     'flex-direction: row; ' +
-    'position: absolute; ' +
+    'justify-content: center; ' +
+    'position: fixed; ' +
     'top: 0px; ' +
-    'right: 0px;'
+    'left: 0px; ' +
+    'right: 0px; ' +
+    'bottom: 0px; '
 
   nextWeekGrid.innerHTML = nextWeekColsContent.join('\n')
 
